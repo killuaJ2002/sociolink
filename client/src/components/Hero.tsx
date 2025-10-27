@@ -8,7 +8,7 @@ const Hero = () => {
       <div className="flex flex-col justify-center">
         <h3 className="font-bold text-xl text-mainTextDark">Kalpajyoti</h3>
         <p className="font-medium text-mainTextLight">
-          Software developer. I believe in learning through building
+          Building random things...
         </p>
       </div>
     </div>
