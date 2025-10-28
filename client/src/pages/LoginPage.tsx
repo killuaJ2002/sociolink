@@ -3,7 +3,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { login } from "@/services/firebaseAuth";
 const LoginPage = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,8 +19,18 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      await login(formData.email, formData.password);
+      setError("");
+      console.log("login successfull");
+    } catch (error: any) {
+      setError(error.message);
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,7 +50,7 @@ const LoginPage = () => {
           />
         </div>
         <div className="grid w-full max-w-sm items-center gap-3">
-          <Label htmlFor="email">Password</Label>
+          <Label htmlFor="password">Password</Label>
           <Input
             type="password"
             id="password"
@@ -51,8 +64,9 @@ const LoginPage = () => {
         variant="outline"
         className="max-w-16 text-mainTextDark"
         onClick={handleSubmit}
+        disabled={loading}
       >
-        Log In
+        {loading ? "Logging in" : "Log In"}
       </Button>
       <p className="text-mainTextLight">
         Don't have an account?{" "}
@@ -60,6 +74,7 @@ const LoginPage = () => {
           Sign Up here
         </Link>
       </p>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
