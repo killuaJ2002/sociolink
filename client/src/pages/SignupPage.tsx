@@ -3,7 +3,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { signup } from "@/services/firebaseAuth";
 const SignupPage = () => {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -17,8 +20,22 @@ const SignupPage = () => {
     });
   };
 
-  const handleSumbit = () => {
-    console.log(formData);
+  const handleSubmit = async () => {
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+    try {
+      setLoading(true);
+      await signup(formData.email, formData.password);
+      setError("");
+      console.log("signup successful");
+    } catch (error: any) {
+      setError(error.message);
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,7 +68,7 @@ const SignupPage = () => {
           <Label htmlFor="confirmPassword">Confirm Password</Label>
           <Input
             type="password"
-            id="password"
+            id="confirmPassword"
             name="confirmPassword"
             placeholder=""
             onChange={handleChange}
@@ -61,9 +78,10 @@ const SignupPage = () => {
       <Button
         variant="outline"
         className="max-w-16 text-mainTextDark"
-        onClick={handleSumbit}
+        onClick={handleSubmit}
+        disabled={loading}
       >
-        Sign Up
+        {loading ? "Signing up" : "Sign Up"}
       </Button>
       <p className="text-mainTextLight">
         Already have an account?{" "}
@@ -71,6 +89,7 @@ const SignupPage = () => {
           Log In here
         </Link>
       </p>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
