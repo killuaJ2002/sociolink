@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "@/services/firebaseAuth";
 const LoginPage = () => {
@@ -11,6 +11,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -25,6 +26,7 @@ const LoginPage = () => {
       await login(formData.email, formData.password);
       setError("");
       console.log("login successfull");
+      navigate("/");
     } catch (error: any) {
       setError(error.message);
       console.log(error.message);

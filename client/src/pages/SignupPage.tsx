@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signup } from "@/services/firebaseAuth";
 const SignupPage = () => {
@@ -12,6 +12,7 @@ const SignupPage = () => {
     password: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -30,6 +31,7 @@ const SignupPage = () => {
       await signup(formData.email, formData.password);
       setError("");
       console.log("signup successful");
+      navigate("/");
     } catch (error: any) {
       setError(error.message);
       console.log(error.message);
