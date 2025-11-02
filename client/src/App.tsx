@@ -9,6 +9,8 @@ import MainLayout from "./layouts/MainLayout";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CreateLinkPage from "./pages/CreateLinkPage";
+import LinkPage from "./pages/LinkPage";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -21,6 +23,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/new"
+          element={
+            <ProtectedRoute>
+              <CreateLinkPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/id" element={<LinkPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
       </Route>
