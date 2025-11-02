@@ -7,7 +7,7 @@ const Navbar = ({ user }: { user: User | null }) => {
   const navigate = useNavigate();
   const handleClick = async () => {
     try {
-      await logout();
+      if (user) await logout();
       navigate("/login");
     } catch (error) {
       if (error instanceof Error) console.log(error.message);
@@ -20,7 +20,11 @@ const Navbar = ({ user }: { user: User | null }) => {
         <span className="text-mainTextDark">Socio</span>
         <span className="text-green-500">Link</span>
       </h2>
-      <Button variant={"destructive"} size={"sm"} onClick={() => handleClick()}>
+      <Button
+        variant={user ? "destructive" : "default"}
+        size={"sm"}
+        onClick={() => handleClick()}
+      >
         {user ? "Log Out" : "Log In"}
       </Button>
     </div>
