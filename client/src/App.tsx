@@ -11,6 +11,7 @@ import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateLinkPage from "./pages/CreateLinkPage";
 import LinkPage from "./pages/LinkPage";
+import NotFoundPage from "./pages/NotFoundPage";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -36,6 +37,7 @@ const App = () => {
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </>
     )
   );
