@@ -14,27 +14,29 @@ import LinkPage from "./pages/LinkPage";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<MainLayout />}>
-        <Route
-          index
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/new"
-          element={
-            <ProtectedRoute>
-              <CreateLinkPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/id" element={<LinkPage />} />
+      <>
+        <Route path="/" element={<MainLayout />}>
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/new"
+            element={
+              <ProtectedRoute>
+                <CreateLinkPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/id" element={<LinkPage />} />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-      </Route>
+      </>
     )
   );
   return <RouterProvider router={router} />;

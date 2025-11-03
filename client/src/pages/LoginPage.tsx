@@ -36,47 +36,53 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-mainTextDark text-xl font-semibold mb-2">
-        Login to your account
+    <div className="max-w-xl mx-auto m-6">
+      <h2 className="text-3xl font-bold font-bricolage mb-8">
+        <span className="text-mainTextDark">Socio</span>
+        <span className="text-green-500">Link</span>
       </h2>
       <div className="flex flex-col gap-3">
-        <div className="grid w-full max-w-sm items-center gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            placeholder=""
-            onChange={handleChange}
-          />
+        <h2 className="text-mainTextDark text-xl font-semibold mb-2">
+          Login to your account
+        </h2>
+        <div className="flex flex-col gap-3">
+          <div className="grid w-full max-w-sm items-center gap-3">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              placeholder=""
+              onChange={handleChange}
+            />
+          </div>
+          <div className="grid w-full max-w-sm items-center gap-3">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              placeholder=""
+              onChange={handleChange}
+            />
+          </div>
         </div>
-        <div className="grid w-full max-w-sm items-center gap-3">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            placeholder=""
-            onChange={handleChange}
-          />
-        </div>
+        <Button
+          variant="outline"
+          className="max-w-19 text-mainTextDark"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Logging in" : "Log In"}
+        </Button>
+        <p className="text-mainTextLight">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-500">
+            Sign Up here
+          </Link>
+        </p>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
-      <Button
-        variant="outline"
-        className="max-w-16 text-mainTextDark"
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {loading ? "Logging in" : "Log In"}
-      </Button>
-      <p className="text-mainTextLight">
-        Don't have an account?{" "}
-        <Link to="/signup" className="text-blue-500">
-          Sign Up here
-        </Link>
-      </p>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
