@@ -1,11 +1,19 @@
 import {db} from './firebaseConfig.ts';
-import {doc, getDoc, setDoc} from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
+import {auth} from './firebaseConfig.ts';
 
-export const createUserProfile = async(uid: string, data: any)=> {
-    await setDoc(doc(db, 'users', uid), data);
-}
-
-export const getUserProfile = async(uid: string) => {
-    const snap = await getDoc(doc(db, 'users', uid));
-    return snap.exists()? snap.data: null;
+export const createUserProfile = async(username: string, bio: string)=> {
+    const user = auth.currentUser;
+    if(!user) {
+        console.log('no user signed in');
+        return;
+    }
+    const ref = doc(db, 'profile', user.uid);
+    await setDoc(ref, {
+        username,
+        bio,
+        email: user.email,
+        createdAt: new Date(),
+    })
+    console.log('created user profile with uid', user.uid);
 }

@@ -17,14 +17,7 @@ const App = () => {
     createRoutesFromElements(
       <>
         <Route path="/" element={<MainLayout />}>
-          <Route
-            index
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+          <Route index element={<HomePage />} />
           <Route
             path="/new"
             element={
