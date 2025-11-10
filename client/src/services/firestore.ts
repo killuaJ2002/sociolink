@@ -1,12 +1,19 @@
 import {db} from './firebaseConfig.ts';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import {auth} from './firebaseConfig.ts';
 
-export const createUserProfile = async(username: string, bio: string)=> {
+export const createUserProfile = async(username: string, bio: string): Promise<{
+    success: boolean, reason?:string
+}>=> {
     const user = auth.currentUser;
     if(!user) {
         console.log('no user signed in');
-        return;
+        return {success: false, reason: 'user_notfound'};
+    }
+    const snap = await getDoc(doc(db, "profile", user.uid));
+    if(snap.exists()) {
+        console.log('user profile already exists');
+        return {success:false, reason: 'already_exists'};
     }
     const ref = doc(db, 'profile', user.uid);
     await setDoc(ref, {
@@ -16,9 +23,17 @@ export const createUserProfile = async(username: string, bio: string)=> {
         createdAt: new Date(),
     })
     console.log('created user profile with uid', user.uid);
+    return {success: true};
 }
 
-export const getUserProfile = async (id: string | null) => {
+type UserProfile = {
+    username: string;
+    bio: string;
+    email: string;
+    createdAt: Date;
+}
+
+export const getUserProfile = async (id: string): Promise<UserProfile | null>=> {
   const snap = await getDoc(doc(db, "profile", id));
-  return snap.exists() ? snap.data() : null;
+  return snap.exists() ? snap.data() as UserProfile : null;
 };

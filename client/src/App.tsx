@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateLinkPage from "./pages/CreateLinkPage";
 import LinkPage from "./pages/LinkPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import CreateProfilePage from "./pages/CreateProfilePage";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -27,6 +28,14 @@ const App = () => {
             }
           />
           <Route path="/id" element={<LinkPage />} />
+          <Route
+            path="/newProfile"
+            element={
+              <ProtectedRoute>
+                <CreateProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
