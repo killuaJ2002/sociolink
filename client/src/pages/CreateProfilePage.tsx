@@ -1,5 +1,5 @@
 import { auth } from "../services/firebaseConfig";
-import { createUserProfile } from "@/services/firestore";
+import { createUserProfile, getUserProfile } from "@/services/firestore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,22 @@ const CreateProfilePage = () => {
     }
   };
 
+  const handleProfileData = async (e: any) => {
+    e.preventDefault();
+    if (!user) {
+      navigate("/");
+      return;
+    }
+    const profileData = await getUserProfile(user.uid);
+    if (!profileData) {
+      setError("Profile doesn't exist");
+      return;
+    }
+    console.log(
+      `username: ${profileData.username} with bio: ${profileData.bio} and email: ${profileData.email} created at: ${profileData.createdAt}`
+    );
+  };
+
   return (
     <>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -64,6 +80,7 @@ const CreateProfilePage = () => {
           Submit
         </Button>
       </form>
+      <Button onClick={handleProfileData}>ProfileDetails</Button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </>
   );
