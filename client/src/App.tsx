@@ -13,6 +13,7 @@ import CreateLinkPage from "./pages/CreateLinkPage";
 import LinkPage from "./pages/LinkPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CreateProfilePage from "./pages/CreateProfilePage";
+import PublicRoute from "./components/PublicRoute";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -37,8 +38,22 @@ const App = () => {
             }
           />
         </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignupPage />
+            </PublicRoute>
+          }
+        />
         <Route path="*" element={<NotFoundPage />} />
       </>
     )
