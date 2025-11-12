@@ -15,19 +15,22 @@ const SignupPage = () => {
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match");
       return;
     }
     try {
       setLoading(true);
+      setError("");
       await signup(formData.email, formData.password);
       setError("");
       console.log("signup successful");
@@ -50,7 +53,7 @@ const SignupPage = () => {
         <h2 className="text-mainTextDark text-xl font-semibold mb-2">
           Signup Your account
         </h2>
-        <div className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div className="grid w-full max-w-sm items-center gap-3">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -59,6 +62,7 @@ const SignupPage = () => {
               name="email"
               placeholder=""
               onChange={handleChange}
+              required
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-3">
@@ -69,6 +73,7 @@ const SignupPage = () => {
               name="password"
               placeholder=""
               onChange={handleChange}
+              required
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-3">
@@ -79,17 +84,17 @@ const SignupPage = () => {
               name="confirmPassword"
               placeholder=""
               onChange={handleChange}
+              required
             />
           </div>
-        </div>
-        <Button
-          variant="outline"
-          className="max-w-19 text-mainTextDark"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? "Signing up" : "Sign Up"}
-        </Button>
+          <Button
+            variant="outline"
+            className="max-w-19 text-mainTextDark"
+            disabled={loading}
+          >
+            {loading ? "Signing up" : "Sign Up"}
+          </Button>
+        </form>
         <p className="text-mainTextLight">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-500">
