@@ -14,17 +14,19 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       setLoading(true);
-      await login(formData.email, formData.password);
       setError("");
+      await login(formData.email, formData.password);
       console.log("login successfull");
       navigate("/");
     } catch (error: any) {
@@ -45,7 +47,7 @@ const LoginPage = () => {
         <h2 className="text-mainTextDark text-xl font-semibold mb-2">
           Login to your account
         </h2>
-        <div className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div className="grid w-full max-w-sm items-center gap-3">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -54,6 +56,7 @@ const LoginPage = () => {
               name="email"
               placeholder=""
               onChange={handleChange}
+              required
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-3">
@@ -64,17 +67,19 @@ const LoginPage = () => {
               name="password"
               placeholder=""
               onChange={handleChange}
+              required
             />
           </div>
-        </div>
-        <Button
-          variant="outline"
-          className="max-w-19 text-mainTextDark"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? "Logging in" : "Log In"}
-        </Button>
+          <Button
+            variant="outline"
+            className="max-w-19 text-mainTextDark"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Logging in" : "Log In"}
+          </Button>
+        </form>
+
         <p className="text-mainTextLight">
           Don't have an account?{" "}
           <Link to="/signup" className="text-blue-500">

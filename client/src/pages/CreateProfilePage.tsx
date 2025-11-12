@@ -12,6 +12,7 @@ const CreateProfilePage = () => {
     username: "",
     bio: "",
   });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleChange = (
@@ -27,6 +28,11 @@ const CreateProfilePage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
+    if (!user) {
+      navigate("/login");
+      setLoading(false);
+    }
     try {
       const res = await createUserProfile(formData.username, formData.bio);
       if (!res.success && res.reason === "user_notfound") {
@@ -41,23 +47,9 @@ const CreateProfilePage = () => {
       console.log("User profile created");
     } catch (error) {
       console.log("something went wrong");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleProfileData = async (e: any) => {
-    e.preventDefault();
-    if (!user) {
-      navigate("/");
-      return;
-    }
-    const profileData = await getUserProfile(user.uid);
-    if (!profileData) {
-      setError("Profile doesn't exist");
-      return;
-    }
-    console.log(
-      `username: ${profileData.username} with bio: ${profileData.bio} and email: ${profileData.email} created at: ${profileData.createdAt}`
-    );
   };
 
   return (
@@ -76,11 +68,10 @@ const CreateProfilePage = () => {
           value={formData.bio}
           onChange={handleChange}
         />
-        <Button type="submit" className="max-w-24">
-          Submit
+        <Button type="submit" className="max-w-24" disabled={loading}>
+          {loading ? "Creating" : "Create"}
         </Button>
       </form>
-      <Button onClick={handleProfileData}>ProfileDetails</Button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </>
   );

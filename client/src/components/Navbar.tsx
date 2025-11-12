@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { logout } from "@/services/firebaseAuth";
 import { useNavigate } from "react-router-dom";
@@ -5,13 +6,23 @@ import type { User } from "firebase/auth";
 
 const Navbar = ({ user }: { user: User | null }) => {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleClick = async () => {
     try {
+      setError("");
+      setLoading(true);
       if (user) await logout();
       navigate("/login");
     } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      console.log("error occured while trying to log out");
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -24,6 +35,7 @@ const Navbar = ({ user }: { user: User | null }) => {
         variant={user ? "destructive" : "default"}
         size={"sm"}
         onClick={() => handleClick()}
+        disabled={loading}
       >
         {user ? "Log Out" : "Log In"}
       </Button>
