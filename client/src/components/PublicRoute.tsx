@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { auth } from "../services/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 interface PublicRouteProps {
   children: React.ReactNode;
 }
 const PublicRoute = ({ children }: PublicRouteProps) => {
   const [user, setUser] = useState<null | object>(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -17,7 +18,7 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to={location.state?.from || "/"} replace />;
   return <>{children}</>;
 };
 

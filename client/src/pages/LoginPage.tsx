@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { login } from "@/services/firebaseAuth";
 const LoginPage = () => {
@@ -12,6 +12,8 @@ const LoginPage = () => {
     password: "",
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: Location })?.from?.pathname || "/";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -28,7 +30,7 @@ const LoginPage = () => {
       setError("");
       await login(formData.email, formData.password);
       console.log("login successfull");
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (error: any) {
       setError(error.message);
       console.log(error.message);
