@@ -1,5 +1,5 @@
 import { auth } from "../services/firebaseConfig";
-import { createUserProfile, getUserProfile } from "@/services/firestore";
+import { createUserProfile } from "@/services/firestore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";

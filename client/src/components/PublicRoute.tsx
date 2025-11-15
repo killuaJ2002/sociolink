@@ -18,7 +18,7 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (user) return <Navigate to={location.state?.from || "/"} replace />;
+  if (user) return <Navigate to="/" replace />;
   return <>{children}</>;
 };
 
