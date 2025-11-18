@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { logout } from "@/services/firebaseAuth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { User } from "firebase/auth";
 
 const Navbar = ({ user }: { user: User | null }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
 
   const handleClick = async () => {
     try {
       setError("");
       setLoading(true);
-      if (user) await logout();
-      navigate("/login");
+      if (user) {
+        await logout();
+        navigate("/login"); // logout takes user to login page
+      } else {
+        navigate("/login"); // guest clicking login just goes to login
+      }
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
