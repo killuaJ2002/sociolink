@@ -1,5 +1,5 @@
 import {db} from './firebaseConfig.ts';
-import { doc, setDoc, getDoc, writeBatch } from "firebase/firestore";
+import { doc, setDoc, getDoc, writeBatch, collection, query, where, getDocs } from "firebase/firestore";
 import {auth} from './firebaseConfig.ts';
 
 export const createUserProfile = async(username: string, bio: string): Promise<{
@@ -59,6 +59,23 @@ export const createLinks = async(uid: string, links: linkItem[]): Promise<{succe
         return {success: true};
     } catch (error: any) {
         console.log("error creating links", error);
+        return {success: false, reason: error.message};
+    }
+}
+
+export const getLinks = async(uid: string): Promise<{success: boolean, results?: Array<linkItem & {id: string, uid: string}>, reason?: string}> => {
+    try {
+        const q = query(
+            collection(db, 'link'),
+            where('uid', '==', uid)
+        );
+        const snap = await getDocs(q);
+        const results = snap.docs.map((doc)=> ({
+            id: doc.id,
+            ...(doc.data() as linkItem & {uid: string})
+        }));
+        return {success: true, results};
+    } catch (error:any) {
         return {success: false, reason: error.message};
     }
 }
