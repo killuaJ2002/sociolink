@@ -1,5 +1,5 @@
 import {db} from './firebaseConfig.ts';
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, writeBatch } from "firebase/firestore";
 import {auth} from './firebaseConfig.ts';
 
 export const createUserProfile = async(username: string, bio: string): Promise<{
@@ -37,3 +37,28 @@ export const getUserProfile = async (id: string): Promise<UserProfile | null>=> 
   const snap = await getDoc(doc(db, "profile", id));
   return snap.exists() ? snap.data() as UserProfile : null;
 };
+
+type linkItem = {
+    url: string;
+    platform: string;
+}
+
+export const createLinks = async(uid: string, links: linkItem[]): Promise<{success: boolean, reason?: string}>=> {
+    try {
+        const batch = writeBatch(db);
+        links.forEach((link)=> {
+            const ref = doc(db, 'link', crypto.randomUUID());
+            batch.set(ref, {
+                uid,
+                url: link.url,
+                platform: link.platform
+            })
+        })
+
+        await batch.commit();
+        return {success: true};
+    } catch (error: any) {
+        console.log("error creating links", error);
+        return {success: false, reason: error.message};
+    }
+}

@@ -2,8 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash, Plus } from "lucide-react";
 import { useState } from "react";
+import { createLinks } from "@/services/firestore";
+import { auth } from "@/services/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 const CreateLinkPage = () => {
   const [links, setLinks] = useState([{ url: "", platform: "" }]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const user = auth.currentUser;
+  const navigate = useNavigate();
   const handleAddMore = (e: any) => {
     e.preventDefault();
     setLinks((prev) => [
@@ -16,6 +23,7 @@ const CreateLinkPage = () => {
   };
 
   const handleChange = (idx: number, field: string, value: string) => {
+    setError("");
     setLinks((prev) =>
       prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item))
     );
@@ -26,8 +34,27 @@ const CreateLinkPage = () => {
     setLinks((prev) => prev.filter((item, i) => i !== idx));
   };
 
-  const handleSubmit = () => {
-    console.log("Links added");
+  const handleSubmit = async (e: any) => {
+    try {
+      setLoading(true);
+      e.preventDefault();
+      if (!user) {
+        setError("No user found");
+        return;
+      }
+      const res = await createLinks(user.uid, links);
+      if (!res.success) {
+        throw new Error(res.reason);
+      }
+      console.log("links added successfully");
+      navigate("/");
+    } catch (error: any) {
+      error instanceof Error
+        ? setError(error.message)
+        : setError("Some error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="flex flex-col gap-4">
