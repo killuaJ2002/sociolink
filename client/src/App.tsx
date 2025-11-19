@@ -14,6 +14,7 @@ import LinkPage from "./pages/LinkPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CreateProfilePage from "./pages/CreateProfilePage";
 import PublicRoute from "./components/PublicRoute";
+import { Toaster } from "sonner";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -58,7 +59,12 @@ const App = () => {
       </>
     )
   );
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster richColors position="top-center" />
+    </>
+  );
 };
 
 export default App;

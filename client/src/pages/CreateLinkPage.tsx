@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createLinks } from "@/services/firestore";
 import { auth } from "@/services/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 const CreateLinkPage = () => {
   const [links, setLinks] = useState([{ url: "", platform: "" }]);
   const [error, setError] = useState("");
@@ -40,18 +41,20 @@ const CreateLinkPage = () => {
       e.preventDefault();
       if (!user) {
         setError("No user found");
+        toast.error(error);
         return;
       }
       const res = await createLinks(user.uid, links);
       if (!res.success) {
         throw new Error(res.reason);
       }
-      console.log("links added successfully");
+      toast.success("links added successfully");
       navigate("/");
     } catch (error: any) {
       error instanceof Error
         ? setError(error.message)
         : setError("Some error occurred");
+      toast.error(error);
     } finally {
       setLoading(false);
     }
@@ -93,7 +96,7 @@ const CreateLinkPage = () => {
           >
             <Plus />
           </Button>
-          <Button type="submit" className="max-w-20">
+          <Button type="submit" className="max-w-20" disabled={loading}>
             Add
           </Button>
         </div>
