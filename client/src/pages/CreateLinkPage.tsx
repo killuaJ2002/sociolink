@@ -1,17 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash, Plus } from "lucide-react";
-import { useState } from "react";
-import { createLinks } from "@/services/firestore";
+import { useEffect, useState } from "react";
+import { createLinks, getUserProfile } from "@/services/firestore";
 import { auth } from "@/services/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 const CreateLinkPage = () => {
   const [links, setLinks] = useState([{ url: "", platform: "" }]);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const user = auth.currentUser;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkProfileStatus = async () => {
+      const user = auth.currentUser;
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+      const profileExists = await getUserProfile(user.uid);
+      if (!profileExists) {
+        navigate("/newProfile");
+        return;
+      }
+    };
+    checkProfileStatus();
+  }, [navigate]);
+
   const handleAddMore = (e: any) => {
     e.preventDefault();
     setLinks((prev) => [
@@ -24,7 +39,6 @@ const CreateLinkPage = () => {
   };
 
   const handleChange = (idx: number, field: string, value: string) => {
-    setError("");
     setLinks((prev) =>
       prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item))
     );
@@ -38,10 +52,10 @@ const CreateLinkPage = () => {
   const handleSubmit = async (e: any) => {
     try {
       setLoading(true);
+      const user = auth.currentUser;
       e.preventDefault();
       if (!user) {
-        setError("No user found");
-        toast.error(error);
+        toast.error("No user found");
         return;
       }
       const res = await createLinks(user.uid, links);
@@ -51,10 +65,7 @@ const CreateLinkPage = () => {
       toast.success("links added successfully");
       navigate("/");
     } catch (error: any) {
-      error instanceof Error
-        ? setError(error.message)
-        : setError("Some error occurred");
-      toast.error(error);
+      toast.error(error.message || "Some error occurred");
     } finally {
       setLoading(false);
     }

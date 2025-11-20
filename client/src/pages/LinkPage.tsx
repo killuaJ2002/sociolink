@@ -3,9 +3,11 @@ import LinkSection from "../components/LinkSection";
 import Footer from "../components/Footer";
 import { getLinks } from "@/services/firestore";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { getUserProfile } from "@/services/firestore";
 const LinkPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [links, setLinks] = useState([
     {
       id: "",
@@ -21,6 +23,11 @@ const LinkPage = () => {
       try {
         if (!id) {
           throw new Error("No id found");
+        }
+        const userExists = await getUserProfile(id);
+        if (!userExists) {
+          navigate("*");
+          return;
         }
         const res = await getLinks(id);
         if (!res.success) {

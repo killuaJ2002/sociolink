@@ -1,9 +1,17 @@
 import { Link2, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "@/services/firebaseConfig";
+import { getUserProfile } from "@/services/firestore";
 const HomePage = () => {
   const navigate = useNavigate();
-  const user = auth.currentUser;
+
+  const checkProfile = async (): Promise<boolean> => {
+    const user = auth.currentUser;
+    if (!user) return false;
+    const profileExists = await getUserProfile(user.uid);
+    if (!profileExists) return false;
+    return true;
+  };
   return (
     <div className="pt-20 px-4">
       <div className="max-w-3xl mx-auto text-center space-y-8">
@@ -30,11 +38,16 @@ const HomePage = () => {
         {/* CTA Button */}
         <button
           className="bg-linear-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold px-10 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-2 group"
-          onClick={() => {
+          onClick={async () => {
+            const user = auth.currentUser;
             if (!user) {
               navigate("/new");
             } else {
-              navigate(`/${user.uid}`);
+              if (await checkProfile()) {
+                navigate(`/user/${user.uid}`);
+              } else {
+                navigate("/newProfile");
+              }
             }
           }}
         >
