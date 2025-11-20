@@ -9,11 +9,9 @@ type LinkItem = {
 
 type LinkSectionProps = {
   links: LinkItem[];
-  loading: boolean;
   error: string;
 };
-const LinkSection = ({ links, loading, error }: LinkSectionProps) => {
-  if (loading) return <>Loading...</>;
+const LinkSection = ({ links, error }: LinkSectionProps) => {
   if (!links || links.length === 0) return <>No links to show</>;
   return (
     <div className="flex flex-col gap-6 mb-8">

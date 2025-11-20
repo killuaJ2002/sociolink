@@ -8,6 +8,10 @@ import { getUserProfile } from "@/services/firestore";
 const LinkPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [profile, setProfile] = useState({
+    username: "",
+    bio: "",
+  });
   const [links, setLinks] = useState([
     {
       id: "",
@@ -16,43 +20,49 @@ const LinkPage = () => {
       platform: "",
     },
   ]);
-  const [loading, setLoadiing] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   useEffect(() => {
-    const fetchLinks = async () => {
+    const fetchData = async () => {
       try {
         if (!id) {
-          throw new Error("No id found");
+          navigate("/");
+          return;
         }
-        const userExists = await getUserProfile(id);
-        if (!userExists) {
+
+        const userProfile = await getUserProfile(id);
+        if (!userProfile) {
           navigate("*");
           return;
         }
+
+        setProfile({
+          username: userProfile.username,
+          bio: userProfile.bio,
+        });
+
         const res = await getLinks(id);
         if (!res.success) {
-          const errorMsg = res.reason ? res.reason : "Failed to retrieve links";
+          const errorMsg = res.reason || "Failed to retrieve links";
           throw new Error(errorMsg);
         }
 
-        if (!res.results || res.results.length === 0) {
-          setLinks([]);
-          return;
-        }
-
-        setLinks(res.results);
-      } catch (error: any) {
-        setError(error.message);
+        setLinks(res.results || []);
+      } catch (err: any) {
+        setError(err.message || "Some error occurred");
       } finally {
-        setLoadiing(false);
+        setLoading(false);
       }
     };
-    fetchLinks();
-  }, []);
+
+    fetchData();
+  }, [id, navigate]);
+
+  if (loading) return <>Loading...</>;
   return (
     <div>
-      <Hero />
-      <LinkSection links={links} loading={loading} error={error} />
+      <Hero profile={profile} />
+      <LinkSection links={links} error={error} />
       <Footer />
     </div>
   );
