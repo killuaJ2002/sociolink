@@ -2,10 +2,10 @@ import Hero from "../components/Hero";
 import LinkSection from "../components/LinkSection";
 import Footer from "../components/Footer";
 import { getLinks } from "@/services/firestore";
-import { auth } from "@/services/firebaseConfig";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 const LinkPage = () => {
-  const user = auth.currentUser;
+  const { id } = useParams();
   const [links, setLinks] = useState([
     {
       id: "",
@@ -19,10 +19,10 @@ const LinkPage = () => {
   useEffect(() => {
     const fetchLinks = async () => {
       try {
-        if (!user) {
-          throw new Error("user not found");
+        if (!id) {
+          throw new Error("No id found");
         }
-        const res = await getLinks(user.uid);
+        const res = await getLinks(id);
         if (!res.success) {
           const errorMsg = res.reason ? res.reason : "Failed to retrieve links";
           throw new Error(errorMsg);

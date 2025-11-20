@@ -1,8 +1,9 @@
 import { Link2, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { auth } from "@/services/firebaseConfig";
 const HomePage = () => {
   const navigate = useNavigate();
+  const user = auth.currentUser;
   return (
     <div className="pt-20 px-4">
       <div className="max-w-3xl mx-auto text-center space-y-8">
@@ -29,7 +30,13 @@ const HomePage = () => {
         {/* CTA Button */}
         <button
           className="bg-linear-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold px-10 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-2 group"
-          onClick={() => navigate("/new")}
+          onClick={() => {
+            if (!user) {
+              navigate("/new");
+            } else {
+              navigate(`/${user.uid}`);
+            }
+          }}
         >
           Get started
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

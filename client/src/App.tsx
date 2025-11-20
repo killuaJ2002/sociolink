@@ -29,7 +29,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/id" element={<LinkPage />} />
+          <Route path="/:id" element={<LinkPage />} />
           <Route
             path="/newProfile"
             element={
