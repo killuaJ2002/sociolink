@@ -12,6 +12,7 @@ const CreateProfilePage = () => {
     username: "",
     bio: "",
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -55,6 +56,25 @@ const CreateProfilePage = () => {
   return (
     <>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <Input
+          id="picture"
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            setFormData((prev) => ({ ...prev, image: file }));
+            setImagePreview(URL.createObjectURL(file));
+          }}
+        />
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="preview"
+            className="w-28 h-28 rounded-full object-cover"
+          />
+        )}
         <Input
           placeholder="your name"
           name="username"
