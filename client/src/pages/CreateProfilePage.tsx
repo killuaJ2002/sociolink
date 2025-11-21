@@ -11,6 +11,7 @@ const CreateProfilePage = () => {
   const [formData, setFormData] = useState({
     username: "",
     bio: "",
+    image: null as File | null,
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

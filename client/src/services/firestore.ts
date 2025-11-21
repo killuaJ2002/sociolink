@@ -1,8 +1,9 @@
 import {db} from './firebaseConfig.ts';
 import { doc, setDoc, getDoc, writeBatch, collection, query, where, getDocs } from "firebase/firestore";
-import {auth} from './firebaseConfig.ts';
+import {auth, storage} from './firebaseConfig.ts';
+import {uploadBytes, getDownloadURL, ref as storageRef} from 'firebase/storage';
 
-export const createUserProfile = async(username: string, bio: string): Promise<{
+export const createUserProfile = async(username: string, bio: string, image?: File | null): Promise<{
     success: boolean, reason?:string
 }>=> {
     const user = auth.currentUser;
@@ -16,12 +17,22 @@ export const createUserProfile = async(username: string, bio: string): Promise<{
         return {success:false, reason: 'already_exists'};
     }
     const ref = doc(db, 'profile', user.uid);
+    let imageUrl = null;
+
+    if (image) {
+        const imageRef = storageRef(storage, `profileImages/${user.uid}`);
+        await uploadBytes(imageRef, image);
+        imageUrl = await getDownloadURL(imageRef);
+    }
+
     await setDoc(ref, {
-        username,
-        bio,
-        email: user.email,
-        createdAt: new Date(),
-    })
+    username,
+    bio,
+    email: user.email,
+    createdAt: new Date(),
+    imageUrl, // <-- always store string or null
+    });
+
     console.log('created user profile with uid', user.uid);
     return {success: true};
 }
@@ -29,6 +40,7 @@ export const createUserProfile = async(username: string, bio: string): Promise<{
 type UserProfile = {
     username: string;
     bio: string;
+    imageUrl?: string;
     email: string;
     createdAt: Date;
 }
