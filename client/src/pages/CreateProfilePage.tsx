@@ -36,7 +36,11 @@ const CreateProfilePage = () => {
       setLoading(false);
     }
     try {
-      const res = await createUserProfile(formData.username, formData.bio);
+      const res = await createUserProfile(
+        formData.username,
+        formData.bio,
+        formData.image
+      );
       if (!res.success && res.reason === "user_notfound") {
         setError("User is not logged in");
         return;

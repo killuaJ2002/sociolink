@@ -12,6 +12,7 @@ const LinkPage = () => {
   const [profile, setProfile] = useState({
     username: "",
     bio: "",
+    imageUrl: "",
   });
   const [links, setLinks] = useState([
     {
@@ -42,6 +43,7 @@ const LinkPage = () => {
         setProfile({
           username: userProfile.username,
           bio: userProfile.bio,
+          imageUrl: userProfile.imageUrl ?? "",
         });
 
         const res = await getLinks(id);

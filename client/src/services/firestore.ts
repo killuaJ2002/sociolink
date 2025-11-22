@@ -1,7 +1,7 @@
 import {db} from './firebaseConfig.ts';
 import { doc, setDoc, getDoc, writeBatch, collection, query, where, getDocs } from "firebase/firestore";
-import {auth, storage} from './firebaseConfig.ts';
-import {uploadBytes, getDownloadURL, ref as storageRef} from 'firebase/storage';
+import {auth} from './firebaseConfig.ts';
+import { supabase } from './supabaseConfig.ts';
 
 export const createUserProfile = async(username: string, bio: string, image?: File | null): Promise<{
     success: boolean, reason?:string
@@ -20,17 +20,35 @@ export const createUserProfile = async(username: string, bio: string, image?: Fi
     let imageUrl = null;
 
     if (image) {
-        const imageRef = storageRef(storage, `profileImages/${user.uid}`);
-        await uploadBytes(imageRef, image);
-        imageUrl = await getDownloadURL(imageRef);
+        const fileName = `${user.uid}-${Date.now()}`;
+
+        const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from("profile-images")
+            .upload(fileName, image, {
+            contentType: image.type,
+            cacheControl: "3600",
+            upsert: false,
+            });
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicData } = supabase
+            .storage
+            .from("profile-images")
+            .getPublicUrl(fileName);
+
+        imageUrl = publicData.publicUrl;
     }
 
+
+
     await setDoc(ref, {
-    username,
-    bio,
-    email: user.email,
-    createdAt: new Date(),
-    imageUrl, // <-- always store string or null
+        username,
+        bio,
+        email: user.email,
+        createdAt: new Date(),
+        imageUrl, // <-- always store string or null
     });
 
     console.log('created user profile with uid', user.uid);
@@ -40,7 +58,7 @@ export const createUserProfile = async(username: string, bio: string, image?: Fi
 type UserProfile = {
     username: string;
     bio: string;
-    imageUrl?: string;
+    imageUrl?: string | null;
     email: string;
     createdAt: Date;
 }
