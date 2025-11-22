@@ -5,6 +5,7 @@ import { getLinks } from "@/services/firestore";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUserProfile } from "@/services/firestore";
+import { auth } from "@/services/firebaseConfig";
 const LinkPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const LinkPage = () => {
   ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const user = auth.currentUser;
+  const isOwner = user ? user.uid === id : false;
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,8 +65,8 @@ const LinkPage = () => {
   return (
     <div>
       <Hero profile={profile} />
-      <LinkSection links={links} error={error} />
-      <Footer />
+      <LinkSection links={links} error={error} isOwner={isOwner} id={id} />
+      <Footer isOwner={isOwner} />
     </div>
   );
 };

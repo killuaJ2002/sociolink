@@ -1,5 +1,6 @@
 import LinkComponent from "./LinkComponent";
-
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 type LinkItem = {
   id: string;
   uid: string;
@@ -10,14 +11,32 @@ type LinkItem = {
 type LinkSectionProps = {
   links: LinkItem[];
   error: string;
+  isOwner: boolean;
+  id: string | undefined;
 };
-const LinkSection = ({ links, error }: LinkSectionProps) => {
+const LinkSection = ({ links, error, isOwner, id }: LinkSectionProps) => {
+  const navigate = useNavigate();
   if (!links || links.length === 0) return <>No links to show</>;
   return (
-    <div className="flex flex-col gap-6 mb-8">
-      {links.map((link) => (
-        <LinkComponent key={link.id} platform={link.platform} url={link.url} />
-      ))}
+    <div className="pt-0">
+      {isOwner && (
+        <Button
+          className="flex justify-self-end mb-4 max-w-20"
+          variant={"outline"}
+          onClick={() => navigate(`/user/${id}/edit`)}
+        >
+          Edit links
+        </Button>
+      )}
+      <div className="flex flex-col gap-6 mb-8">
+        {links.map((link) => (
+          <LinkComponent
+            key={link.id}
+            platform={link.platform}
+            url={link.url}
+          />
+        ))}
+      </div>
     </div>
   );
 };
